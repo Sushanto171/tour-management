@@ -10,20 +10,23 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import { z } from "zod";
 import SocialLogin from "./SocialLogin";
 
 const formSchema = z.object({
-  name: z.string().min(2).max(200),
   email: z.email(),
+  password: z.string(),
 });
 
 export default function LoginFrom() {
-  const from = useForm<z.infer<typeof formSchema>>({
+  const [showPass, setShowPass] = useState(false);
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", email: "" },
+    defaultValues: { email: "", password: "" },
   });
   const onSubmitHandler = (data: z.infer<typeof formSchema>) => {
     console.log(data);
@@ -38,25 +41,66 @@ export default function LoginFrom() {
           </p>
         </div>
 
-        <Form {...from}>
-          <form onSubmit={from.handleSubmit((data) => onSubmitHandler(data))}>
+        <Form {...form}>
+          <form
+            className="space-y-4"
+            onSubmit={form.handleSubmit(onSubmitHandler)}
+          >
             <FormField
-              control={from.control}
-              name="name"
+              control={form.control}
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Type Your Name." />
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="john@company.com"
+                    />
                   </FormControl>
                   <FormDescription className="sr-only">
-                    This is your public name
+                    This is your public Email
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button className="mt-2" type="submit">
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <div className="grid gap-3 relative">
+                      <Input
+                        {...field}
+                        type={showPass ? "text" : "password"}
+                        placeholder="******"
+                      />
+                      <button
+                        className="absolute right-4 top-2"
+                        type="button"
+                        onClick={() => setShowPass(!showPass)}
+                      >
+                        {showPass ? (
+                          <EyeIcon size={16} />
+                        ) : (
+                          <EyeOffIcon size={16} />
+                        )}
+                      </button>
+                    </div>
+                  </FormControl>
+                  <FormDescription className="sr-only">
+                    This is your public Email
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button className="w-full cursor-pointer" type="submit">
               Submit
             </Button>
           </form>
