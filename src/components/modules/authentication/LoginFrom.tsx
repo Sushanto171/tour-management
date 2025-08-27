@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -9,11 +10,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useLoginMutation } from "@/redux/features/auth/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
+import { toast } from "sonner";
 import { z } from "zod";
 import SocialLogin from "./SocialLogin";
 
@@ -24,12 +27,21 @@ const formSchema = z.object({
 
 export default function LoginFrom() {
   const [showPass, setShowPass] = useState(false);
+  const [login] = useLoginMutation();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "", password: "" },
   });
-  const onSubmitHandler = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+  const onSubmitHandler = async (data: z.infer<typeof formSchema>) => {
+    // console.log(data);
+    try {
+      const result = await login(data).unwrap();
+      console.log( result );
+      toast.success(result.message);
+    } catch (error: any) {
+      toast.error(error.data.message);
+      console.log(error);
+    }
   };
   return (
     <div className="p-6 md:p-8">
@@ -101,7 +113,7 @@ export default function LoginFrom() {
               )}
             />
             <Button className="w-full cursor-pointer" type="submit">
-              Submit
+              Login
             </Button>
           </form>
         </Form>
