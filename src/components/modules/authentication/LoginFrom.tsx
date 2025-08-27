@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 import SocialLogin from "./SocialLogin";
@@ -26,6 +26,7 @@ const formSchema = z.object({
 });
 
 export default function LoginFrom() {
+  const navigate = useNavigate();
   const [showPass, setShowPass] = useState(false);
   const [login] = useLoginMutation();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -36,11 +37,12 @@ export default function LoginFrom() {
     // console.log(data);
     try {
       const result = await login(data).unwrap();
-      console.log( result );
       toast.success(result.message);
     } catch (error: any) {
       toast.error(error.data.message);
-      console.log(error);
+      if (error.status === 401 && error.data.message !== "Password does not match.") {
+        navigate("/verify", { state: { email: data.email } });
+      }
     }
   };
   return (
