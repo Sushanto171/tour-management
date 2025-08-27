@@ -17,17 +17,25 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import z from "zod";
 import SocialLogin from "./SocialLogin";
-const formSchema = z.object({
-  name: z.string().min(3, { error: "Name is too short" }),
-  email: z.email(),
-  password: z.string().min(8, { error: "Password is too short." }),
-  confirmPassword: z
-    .string()
-    .min(8, { error: "Confirm Password is too short." }),
-});
+const formSchema = z
+  .object({
+    name: z.string().min(3, { error: "Name is too short" }),
+    email: z.email(),
+    password: z.string().min(8, { error: "Password is too short." }),
+    confirmPassword: z
+      .string()
+      .min(8, { error: "Confirm Password is too short." }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    error: "Confirm Password does not match.",
+    path: ["confirmPassword"],
+  });
 
 export default function RegisterFrom() {
-  const [showPass, setShowPass] = useState(false);
+  const [showPass, setShowPass] = useState({
+    password: false,
+    confirmPassword: false,
+  });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -100,21 +108,21 @@ export default function RegisterFrom() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <div className="grid gap-3 relative">
+                      <div className="relative">
                         <Input
                           {...field}
-                          type={showPass ? "text" : "password"}
-                          placeholder="******"
+                          type={showPass.password ? "text" : "password"}
+                          placeholder="********"
                         />
                         <button
                           className="absolute right-4 top-2"
                           type="button"
-                          onClick={() => setShowPass(!showPass)}
+                          onClick={() => setShowPass((params)=>({...params, password: !params.password}))}
                         >
-                          {showPass ? (
-                            <EyeIcon size={16} />
-                          ) : (
+                          {showPass.password ? (
                             <EyeOffIcon size={16} />
+                          ) : (
+                            <EyeIcon size={16} />
                           )}
                         </button>
                       </div>
@@ -134,21 +142,26 @@ export default function RegisterFrom() {
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
-                      <div className="grid gap-3 relative">
+                      <div className="relative">
                         <Input
                           {...field}
-                          type={showPass ? "text" : "password"}
-                          placeholder="******"
+                          type={showPass.confirmPassword ? "text" : "password"}
+                          placeholder="********"
                         />
                         <button
                           className="absolute right-4 top-2"
                           type="button"
-                          onClick={() => setShowPass(!showPass)}
+                          onClick={() =>
+                            setShowPass((params) => ({
+                              ...params,
+                              confirmPassword: !params.confirmPassword,
+                            }))
+                          }
                         >
-                          {showPass ? (
-                            <EyeIcon size={16} />
-                          ) : (
+                          {showPass.confirmPassword ? (
                             <EyeOffIcon size={16} />
+                          ) : (
+                            <EyeIcon size={16} />
                           )}
                         </button>
                       </div>
@@ -160,7 +173,7 @@ export default function RegisterFrom() {
                   </FormItem>
                 )}
               />
-              
+
               <Button type="submit" className="w-full">
                 Register
               </Button>
@@ -169,7 +182,7 @@ export default function RegisterFrom() {
 
           <SocialLogin />
           <div className="text-center text-sm">
-            Already have an account?{" "}
+            Already have an account?
             <Link to="/login" className="underline underline-offset-4">
               Login
             </Link>
