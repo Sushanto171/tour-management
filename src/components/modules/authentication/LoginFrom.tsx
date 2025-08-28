@@ -40,7 +40,10 @@ export default function LoginFrom() {
       toast.success(result.message);
     } catch (error: any) {
       toast.error(error.data.message);
-      if (error.status === 401 && error.data.message !== "Password does not match.") {
+      if (
+        error.status === 401 &&
+        error.data.message === "User is not verified."
+      ) {
         navigate("/verify", { state: { email: data.email } });
       }
     }
