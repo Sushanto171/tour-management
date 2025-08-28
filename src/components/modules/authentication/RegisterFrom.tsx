@@ -59,10 +59,12 @@ export default function RegisterFrom() {
     };
     try {
       const result = await register(userData).unwrap();
-      toast.success(result.data.message);
+      toast.success(
+        result.message || "You are registered successfully."
+      );
       navigate("/verify", { state: { email: data.email } });
     } catch (error: any) {
-      toast.error(error.data.message);
+      toast.error(error.message);
       console.log(error);
     }
   };
