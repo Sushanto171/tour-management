@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -10,11 +11,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useRegisterMutation } from "@/redux/features/auth/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { toast } from "sonner";
 import z from "zod";
 import SocialLogin from "./SocialLogin";
 const formSchema = z
@@ -32,6 +35,8 @@ const formSchema = z
   });
 
 export default function RegisterFrom() {
+  const [register] = useRegisterMutation();
+  const navigate = useNavigate();
   const [showPass, setShowPass] = useState({
     password: false,
     confirmPassword: false,
@@ -45,8 +50,21 @@ export default function RegisterFrom() {
       confirmPassword: "",
     },
   });
-  const onSubmitHandler = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+
+  const onSubmitHandler = async (data: z.infer<typeof formSchema>) => {
+    const userData = {
+      name: data.name,
+      email: data.email,
+      password: data.password,
+    };
+    try {
+      const result = await register(userData).unwrap();
+      toast.success(result.data.message);
+      navigate("/verify", { state: { email: data.email } });
+    } catch (error: any) {
+      toast.error(error.data.message);
+      console.log(error);
+    }
   };
   return (
     <>
@@ -117,7 +135,12 @@ export default function RegisterFrom() {
                         <button
                           className="absolute right-4 top-2"
                           type="button"
-                          onClick={() => setShowPass((params)=>({...params, password: !params.password}))}
+                          onClick={() =>
+                            setShowPass((params) => ({
+                              ...params,
+                              password: !params.password,
+                            }))
+                          }
                         >
                           {showPass.password ? (
                             <EyeOffIcon size={16} />
