@@ -37,7 +37,11 @@ export default function LoginFrom() {
     // console.log(data);
     try {
       const result = await login(data).unwrap();
-      toast.success(result.message);
+
+      if (result.success) {
+        toast.success(result.message);
+        navigate("/");
+      }
     } catch (error: any) {
       toast.error(error.data.message);
       if (
