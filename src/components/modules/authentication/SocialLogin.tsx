@@ -1,5 +1,7 @@
 import Google from "@/assets/icons/Google";
 import { Button } from "@/components/ui/button";
+import { config } from "@/config";
+import { Facebook } from "lucide-react";
 
 export default function SocialLogin() {
   return (
@@ -10,12 +12,17 @@ export default function SocialLogin() {
         </span>
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <Button variant="outline" type="button" className="w-full">
+        <Button
+          onClick={() => window.open(`${config.baseUrl}/auth/google`)}
+          variant="outline"
+          type="button"
+          className="w-full"
+        >
           <Google />
           <span className="sr-only">Login with Apple</span>
         </Button>
         <Button variant="outline" type="button" className="w-full">
-          <Google />
+          <Facebook />
           <span className="sr-only">Login with Apple</span>
         </Button>
       </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Logo from "@/assets/icons/Logo";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +12,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  authApi,
+  useLogoutMutation,
+  useUserInfoQuery,
+} from "@/redux/features/auth/api";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router";
+import { toast } from "sonner";
 import { ModeToggle } from "./ModeToggle";
 
 // Navigation links array to be used in both desktop and mobile menus
@@ -20,7 +28,21 @@ const navigationLinks = [
   { href: "/about", label: "About" },
 ];
 
-export default function Component() {
+export default function Navbar() {
+  const { data } = useUserInfoQuery(undefined);
+  const [logout] = useLogoutMutation();
+  const dispatch = useDispatch();
+  const handleLogout = async () => {
+    try {
+      const result = await logout(null).unwrap();
+      toast.success(result.message);
+      console.log(data?.data.email);
+      dispatch(authApi.util.resetApiState());
+    } catch (error: any) {
+      toast.error(error.data.message);
+      console.log(error);
+    }
+  };
   return (
     <header className="border-b">
       <div className="container mx-auto px-4 flex h-16 items-center justify-between gap-4">
@@ -100,12 +122,25 @@ export default function Component() {
         {/* Right side */}
         <div className="flex items-center gap-2">
           <ModeToggle />
-          <Button asChild variant="ghost" size="sm" className="text-sm">
-            <Link to="/login">Login</Link>
-          </Button>
-          <Button asChild size="sm" className="text-sm">
-            <Link to="/register">Register</Link>
-          </Button>
+          {data?.data.email ? (
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              size="sm"
+              className="text-sm"
+            >
+              Logout
+            </Button>
+          ) : (
+            <>
+              <Button asChild variant="ghost" size="sm" className="text-sm">
+                <Link to="/login">Login</Link>
+              </Button>
+              <Button asChild size="sm" className="text-sm">
+                <Link to="/register">Register</Link>
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>
