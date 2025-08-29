@@ -47,7 +47,7 @@ export default function Verify() {
   const navigate = useNavigate();
   const [sendOtp] = useSendOtpMutation();
   const [verifyOtp] = useVerifyOtpMutation();
-  const [seconds, setSeconds] = useState(120);
+  const [seconds, setSeconds] = useState(0);
   const form = useForm<z.infer<typeof otpSchema>>({
     resolver: zodResolver(otpSchema),
     defaultValues: { otp: "" },
@@ -62,9 +62,11 @@ export default function Verify() {
   const handleConfirmed = async () => {
     const toasterId = toast.loading("Sending OTP");
     try {
+      form.reset();
       const result = await sendOtp({ email: state.email }).unwrap();
       if (result.success) {
         setConfirmed(true);
+        setSeconds(120);
         toast.success("OTP Send", { id: toasterId });
       }
     } catch (error) {
@@ -85,7 +87,7 @@ export default function Verify() {
         navigate("/login");
       }
     } catch (error: any) {
-      toast.success(error.data.message, { id: toastId });
+      toast.error(error.data.message, { id: toastId });
       console.log("verification Error:", error);
     }
   };
@@ -148,7 +150,8 @@ export default function Verify() {
                 <Remaining {...{ setSeconds, seconds }} />
               </div>
               <Button
-                onClick={() => setSeconds(120)}
+                className="cursor-pointer"
+                onClick={handleConfirmed}
                 disabled={seconds !== 0}
                 variant="ghost"
                 size="sm"
@@ -158,10 +161,14 @@ export default function Verify() {
             </div>
 
             <div className="grid gap-2">
-              <Button form="otp-verify" className="h-11 rounded-2xl">
+              <Button
+                className="cursor-pointer"
+                form="otp-verify"
+                
+              >
                 Verify
               </Button>
-              <Button variant="outline" className="h-11 rounded-2xl">
+              <Button variant="outline" className="h-11 rounded-2xl cursor-pointer">
                 Use another method
               </Button>
             </div>
@@ -192,7 +199,7 @@ export default function Verify() {
           <CardFooter className="justify-center text-xs text-muted-foreground">
             <Button
               onClick={handleConfirmed}
-              className="h-11 w-full rounded-2xl cursor-pointer"
+              className="h-11 w-full rounded-2xl cursor-pointer"  
             >
               Send OTP
             </Button>
