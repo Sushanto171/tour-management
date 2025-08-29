@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Remaining from "@/components/modules/authentication/Remaining";
 import { Button } from "@/components/ui/button";
 import {
@@ -59,24 +60,32 @@ export default function Verify() {
   }, [navigate, state]);
 
   const handleConfirmed = async () => {
+    const toasterId = toast.loading("Sending OTP");
     try {
-      await sendOtp({ email: state.email });
-      setConfirmed(true);
+      const result = await sendOtp({ email: state.email }).unwrap();
+      if (result.success) {
+        setConfirmed(true);
+        toast.success("OTP Send", { id: toasterId });
+      }
     } catch (error) {
+      toast.error("OTP Sending failed!", { id: toasterId });
       console.log(error);
     }
   };
 
   const onSubmit = async (otp: z.infer<typeof otpSchema>) => {
+    const toastId = toast.loading("Verifying OTP");
     try {
       const result = await verifyOtp({
         email: state.email,
         otp: otp.otp,
       }).unwrap();
-      console.log(result);
-      toast.success(result.message);
-      navigate("/login");
-    } catch (error) {
+      if (result.success) {
+        toast.success(result.message, { id: toastId });
+        navigate("/login");
+      }
+    } catch (error: any) {
+      toast.success(error.data.message, { id: toastId });
       console.log("verification Error:", error);
     }
   };

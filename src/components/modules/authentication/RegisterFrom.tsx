@@ -64,7 +64,7 @@ export default function RegisterFrom() {
       );
       navigate("/verify", { state: { email: data.email } });
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(error.data.message);
       console.log(error);
     }
   };
