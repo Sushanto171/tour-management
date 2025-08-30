@@ -1,8 +1,9 @@
+import AddTour from "@/pages/admin/AddTour";
 import AddTourType from "@/pages/admin/AddTourType";
 import Analytics from "@/pages/admin/Analytics";
-import type { IRoutes } from "@/types";
+import type { ISidebarItems } from "@/types";
 
-export const sidebarItems: IRoutes[] = [
+export const adminRouteItems: ISidebarItems[] = [
   {
     title: "Dashboard",
     url: "#",
@@ -19,7 +20,12 @@ export const sidebarItems: IRoutes[] = [
     url: "#",
     items: [
       {
-        title: "Add-Tour-Type",
+        title: "Add Tour",
+        url: "/admin/add-tour",
+        component: AddTour,
+      },
+      {
+        title: "Add Tour Type",
         url: "/admin/add-tour-type",
         component: AddTourType,
       },

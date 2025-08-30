@@ -8,7 +8,7 @@ export interface IResponse<T> {
   data: T;
 }
 
-export interface IRoutes {
+export interface ISidebarItems {
   title: string;
   url: string;
   items: {

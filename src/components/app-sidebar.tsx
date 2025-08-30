@@ -20,14 +20,13 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { sidebarItems } from "@/routes/sidebarItems";
-import { generateRoute } from "@/utils/generateRoute";
+
+import { userSidebarItems } from "@/routes/userSidebarItems";
 import { Link } from "react-router";
 
-const navMain = sidebarItems;
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  console.log(generateRoute(sidebarItems));
+  const navMain = userSidebarItems;
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
