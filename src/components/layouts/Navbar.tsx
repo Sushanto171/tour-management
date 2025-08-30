@@ -43,6 +43,7 @@ export default function Navbar() {
       console.log(error);
     }
   };
+
   return (
     <header className="border-b">
       <div className="container mx-auto px-4 flex h-16 items-center justify-between gap-4">
