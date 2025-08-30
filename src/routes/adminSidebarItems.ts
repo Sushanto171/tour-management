@@ -3,7 +3,7 @@ import AddTourType from "@/pages/admin/AddTourType";
 import Analytics from "@/pages/admin/Analytics";
 import type { ISidebarItems } from "@/types";
 
-export const adminRouteItems: ISidebarItems[] = [
+export const adminSidebarItems: ISidebarItems[] = [
   {
     title: "Dashboard",
     url: "#",

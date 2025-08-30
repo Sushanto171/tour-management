@@ -21,16 +21,22 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
-import { userSidebarItems } from "@/routes/userSidebarItems";
+import { useUserInfoQuery } from "@/redux/features/auth/api";
+import type { TRole } from "@/types";
+import { getSidebarItems } from "@/utils/getSidebarItems";
 import { Link } from "react-router";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const navMain = userSidebarItems;
+  const { data: userInfo } = useUserInfoQuery(undefined);
+
+  const navMain = getSidebarItems(userInfo?.data?.role as TRole);
 
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <Logo />
+        <Link to="/">
+          <Logo />
+        </Link>
         <SearchForm />
       </SidebarHeader>
       <SidebarContent className="gap-0">

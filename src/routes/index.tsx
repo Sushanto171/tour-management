@@ -6,7 +6,7 @@ import Register from "@/pages/Register";
 import Verify from "@/pages/Verify";
 import { generateRoute } from "@/utils/generateRoute";
 import { createBrowserRouter } from "react-router";
-import { adminRouteItems } from "./adminSidebarItems";
+import { adminSidebarItems } from "./adminSidebarItems";
 import { userSidebarItems } from "./userSidebarItems";
 
 export const router = createBrowserRouter([
@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
   {
     Component: DashboardLayout,
     path: "/admin",
-    children: [...generateRoute(adminRouteItems)],
+    children: [...generateRoute(adminSidebarItems)],
   },
   {
     Component: DashboardLayout,
