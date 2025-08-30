@@ -5,6 +5,7 @@ import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Verify from "@/pages/Verify";
 import { generateRoute } from "@/utils/generateRoute";
+import withAuth from "@/utils/withAuth";
 import { createBrowserRouter, Navigate } from "react-router";
 import { adminSidebarItems } from "./adminSidebarItems";
 import { userSidebarItems } from "./userSidebarItems";
@@ -33,7 +34,7 @@ export const router = createBrowserRouter([
     path: "/verify",
   },
   {
-    Component: DashboardLayout,
+    Component: withAuth(DashboardLayout, "SUPER_ADMIN"),
     path: "/admin",
     children: [
       { index: true, element: <Navigate to="/admin/analytics" /> },
@@ -41,7 +42,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    Component: DashboardLayout,
+    Component: withAuth(DashboardLayout, "USER"),
     path: "/user",
     children: [
       { index: true, element: <Navigate to="/user/bookings" /> },

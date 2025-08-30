@@ -9,8 +9,8 @@ export const getSidebarItems = (userRole: TRole) => {
       return [...adminSidebarItems];
     case role.admin:
       return [...adminSidebarItems];
-      case role.user:
-    return [...userSidebarItems]
+    case role.user:
+      return [...userSidebarItems];
     default:
       return [];
   }
