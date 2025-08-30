@@ -12,6 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { role } from "@/constants/role";
 import {
   authApi,
   useLogoutMutation,
@@ -24,8 +25,11 @@ import { ModeToggle } from "./ModeToggle";
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
-  { href: "/", label: "Home", active: true },
-  { href: "/about", label: "About" },
+  { href: "/", label: "Home", active: true, role: "PUBLIC" },
+  { href: "/about", label: "About", role: "PUBLIC" },
+  { href: "/admin", label: "Dashboard", role: role.admin },
+  { href: "/admin", label: "Dashboard", role: role.superAdmin },
+  { href: "/user", label: "Dashboard", role: role.user },
 ];
 
 export default function Navbar() {
@@ -43,6 +47,7 @@ export default function Navbar() {
       console.log(error);
     }
   };
+
   return (
     <header className="border-b">
       <div className="container mx-auto px-4 flex h-16 items-center justify-between gap-4">
@@ -87,11 +92,22 @@ export default function Navbar() {
               <NavigationMenu className="max-w-none *:w-full">
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                   {navigationLinks.map((link, index) => (
-                    <NavigationMenuItem key={index} className="w-full">
-                      <NavigationMenuLink asChild className="py-1.5">
-                        <Link to={link.href}>{link.label}</Link>
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
+                    <span key={index}>
+                      {link.role === "PUBLIC" && (
+                        <NavigationMenuItem key={index} className="w-full">
+                          <NavigationMenuLink asChild className="py-1.5">
+                            <Link to={link.href}>{link.label}</Link>
+                          </NavigationMenuLink>
+                        </NavigationMenuItem>
+                      )}
+                      {link.role === data?.data.role && (
+                        <NavigationMenuItem key={index} className="w-full">
+                          <NavigationMenuLink asChild className="py-1.5">
+                            <Link to={link.href}>{link.label}</Link>
+                          </NavigationMenuLink>
+                        </NavigationMenuItem>
+                      )}
+                    </span>
                   ))}
                 </NavigationMenuList>
               </NavigationMenu>
@@ -104,16 +120,24 @@ export default function Navbar() {
             </a>
             {/* Navigation menu */}
             <NavigationMenu className="max-md:hidden">
-              <NavigationMenuList className="gap-2">
+              <NavigationMenuList >
                 {navigationLinks.map((link, index) => (
-                  <NavigationMenuItem key={index}>
-                    <NavigationMenuLink
-                      asChild
-                      className="text-muted-foreground hover:text-primary py-1.5 font-medium"
-                    >
-                      <Link to={link.href}>{link.label}</Link>
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
+                  <span key={index}>
+                    {link.role === "PUBLIC" && (
+                      <NavigationMenuItem key={index} className="w-full">
+                        <NavigationMenuLink asChild className="py-1.5">
+                          <Link to={link.href}>{link.label}</Link>
+                        </NavigationMenuLink>
+                      </NavigationMenuItem>
+                    )}
+                    {link.role === data?.data.role && (
+                      <NavigationMenuItem key={index} className="w-full">
+                        <NavigationMenuLink asChild className="py-1.5">
+                          <Link to={link.href}>{link.label}</Link>
+                        </NavigationMenuLink>
+                      </NavigationMenuItem>
+                    )}
+                  </span>
                 ))}
               </NavigationMenuList>
             </NavigationMenu>

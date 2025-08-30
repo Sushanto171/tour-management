@@ -13,7 +13,7 @@ export default function SocialLogin() {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <Button
-          onClick={() => window.open(`${config.baseUrl}/auth/google`)}
+          onClick={() => window.open(`${config.baseUrl}/auth/google`, "_self")}
           variant="outline"
           type="button"
           className="w-full"
