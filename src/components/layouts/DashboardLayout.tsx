@@ -33,7 +33,7 @@ export default function Page() {
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        <div className="pl-4">
+        <div className="px-2">
         <Outlet />
         </div>
       </SidebarInset>
