@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useAddTourDivisionMutation } from "@/redux/features/division/division.api";
 import type { IDivision } from "@/types";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -31,18 +32,24 @@ export function AddDivisionModal() {
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const form = useForm({ defaultValues: { name: "", description: "" } });
+  const [addDivision] = useAddTourDivisionMutation();
 
   const submitHandler = async (data: Partial<IDivision>) => {
+    const toastId = toast.loading("File uploading...");
     try {
-      console.log(data, image);
-      toast.success("message");
+      const formData = new FormData();
+      formData.append("data", JSON.stringify(data));
+      formData.append("file", image as File);
+      const res = await addDivision(formData).unwrap();
+      toast.success(res.message, { id: toastId });
       setOpen(false);
+      console.log(res);
     } catch (error: any) {
-      toast.error(error.data.message);
+      toast.error(error.data.message, { id: toastId });
     }
   };
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)} className="cursor-pointer">
           Add Division

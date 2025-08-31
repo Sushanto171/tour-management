@@ -10,7 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useGetAllDivisionQuery } from "@/redux/features/tour/tour.api";
+import { useGetAllDivisionQuery } from "@/redux/features/division/division.api";
+
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 

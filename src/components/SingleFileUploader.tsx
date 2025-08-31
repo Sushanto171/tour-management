@@ -107,14 +107,6 @@ export default function SingleFileUploader({
           <span>{errors[0]}</span>
         </div>
       )}
-
-      <p
-        aria-live="polite"
-        role="region"
-        className="text-muted-foreground mt-2 text-center text-xs"
-      >
-        Single image uploader w/ max size ∙
-      </p>
     </div>
   );
 }
