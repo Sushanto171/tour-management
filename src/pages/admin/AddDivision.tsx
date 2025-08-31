@@ -10,7 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useGetAllDivisionQuery } from "@/redux/features/division/division.api";
+import {
+  useDeleteTourDivisionMutation,
+  useGetAllDivisionQuery,
+} from "@/redux/features/division/division.api";
 
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -18,17 +21,19 @@ import { toast } from "sonner";
 export default function AddDivision() {
   const { data: divisions, isLoading: isTypesLoading } =
     useGetAllDivisionQuery(undefined);
+  const [deleteDivision] = useDeleteTourDivisionMutation();
 
   if (isTypesLoading) {
     return <div>Loading...</div>;
   }
 
   const deleteHandler = async (id: string) => {
-    console.log(id);
+    const toastId = toast.loading("Division deleting...");
     try {
-      toast.success("Deleted Successfully");
+      await deleteDivision(id).unwrap();
+      toast.success("Deleted Successfully", { id: toastId });
     } catch (error: any) {
-      toast.error(error.data.message);
+      toast.error(error.data.message, { id: toastId });
     }
   };
 
