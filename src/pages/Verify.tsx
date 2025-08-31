@@ -25,7 +25,7 @@ import {
 import {
   useSendOtpMutation,
   useVerifyOtpMutation,
-} from "@/redux/features/auth/api";
+} from "@/redux/features/auth/auth.api";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Clock, Fingerprint, ShieldCheck } from "lucide-react";
@@ -161,14 +161,13 @@ export default function Verify() {
             </div>
 
             <div className="grid gap-2">
-              <Button
-                className="cursor-pointer"
-                form="otp-verify"
-                
-              >
+              <Button className="cursor-pointer" form="otp-verify">
                 Verify
               </Button>
-              <Button variant="outline" className="h-11 rounded-2xl cursor-pointer">
+              <Button
+                variant="outline"
+                className="h-11 rounded-2xl cursor-pointer"
+              >
                 Use another method
               </Button>
             </div>
@@ -199,7 +198,7 @@ export default function Verify() {
           <CardFooter className="justify-center text-xs text-muted-foreground">
             <Button
               onClick={handleConfirmed}
-              className="h-11 w-full rounded-2xl cursor-pointer"  
+              className="h-11 w-full rounded-2xl cursor-pointer"
             >
               Send OTP
             </Button>

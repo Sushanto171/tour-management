@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import SingleFileUploader from "@/components/SingleFileUploader";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,19 +21,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useAddTourTypeMutation } from "@/redux/features/tour/tour.api";
+import { Textarea } from "@/components/ui/textarea";
+import type { IDivision } from "@/types";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-export function AddTourType() {
+export function AddDivisionModal() {
   const [open, setOpen] = useState(false);
-  const form = useForm({ defaultValues: { name: "" } });
-  const [addType] = useAddTourTypeMutation();
-  const submitHandler = async (data: { name: string }) => {
+  const [image, setImage] = useState<File | null>(null);
+  const form = useForm({ defaultValues: { name: "", description: "" } });
+
+  const submitHandler = async (data: Partial<IDivision>) => {
     try {
-      const res = await addType({ name: data.name }).unwrap();
-      toast.success(res.message);
+      console.log(data, image);
+      toast.success("message");
       setOpen(false);
     } catch (error: any) {
       toast.error(error.data.message);
@@ -42,28 +45,44 @@ export function AddTourType() {
     <Dialog open={open}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)} className="cursor-pointer">
-          Add Tour Type
+          Add Division
         </Button>
       </DialogTrigger>
-      <DialogDescription className="sr-only">Add tour type</DialogDescription>
+      <DialogDescription className="sr-only">Add Division</DialogDescription>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Tour Type</DialogTitle>
+          <DialogTitle>Add Division</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form id="add-tour-type" onSubmit={form.handleSubmit(submitHandler)}>
+          <form
+            id="add-division"
+            className="space-y-4"
+            onSubmit={form.handleSubmit(submitHandler)}
+          >
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Division Name</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      type="name"
-                      placeholder="tour type name"
-                    />
+                    <Input {...field} type="text" placeholder="division name" />
+                  </FormControl>
+                  <FormDescription className="sr-only">
+                    This is your tour type name
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} placeholder="Description..." />
                   </FormControl>
                   <FormDescription className="sr-only">
                     This is your tour type name
@@ -73,6 +92,7 @@ export function AddTourType() {
               )}
             />
           </form>
+          <SingleFileUploader onChange={setImage} />
         </Form>
         <DialogFooter>
           <DialogClose asChild>
@@ -80,8 +100,8 @@ export function AddTourType() {
               Cancel
             </Button>
           </DialogClose>
-          <Button form="add-tour-type" type="submit">
-            Add Type
+          <Button form="add-division" type="submit">
+            Add Division
           </Button>
         </DialogFooter>
       </DialogContent>

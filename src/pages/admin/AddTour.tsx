@@ -11,7 +11,7 @@ import {
 import {
   useGetAllDivisionQuery,
   useGetAllTourTypesQuery,
-} from "@/redux/features/tour/api";
+} from "@/redux/features/tour/tour.api";
 
 export default function AddTour() {
   const { data: divisions, isLoading: isDivisionLading } =
@@ -21,7 +21,7 @@ export default function AddTour() {
   if (isDivisionLading || isTypesLoading) {
     return <div>Loading...</div>;
   }
-  console.log(divisions, tourTypes);
+  // console.log(divisions, tourTypes);
 
   const invoices = [
     {
