@@ -21,15 +21,19 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
-import { useUserInfoQuery } from "@/redux/features/auth/api";
+import { useUserInfoQuery } from "@/redux/features/auth/auth.api";
 import type { TRole } from "@/types";
 import { getSidebarItems } from "@/utils/getSidebarItems";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: userInfo } = useUserInfoQuery(undefined);
+  const { pathname } = useLocation();
 
   const navMain = getSidebarItems(userInfo?.data?.role as TRole);
+  const [active, setActive] = React.useState(
+    pathname === "/admin" ? "/admin/analytics" : "user/booking"
+  );
 
   return (
     <Sidebar {...props}>
@@ -63,8 +67,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenu>
                     {item.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
-                          {/* <SidebarMenuButton asChild isActive={item.isActive}> */}
+                        <SidebarMenuButton
+                          onClick={() => setActive(item.url)}
+                          asChild
+                          isActive={active === item.url}
+                        >
                           <Link to={item.url}>{item.title}</Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>

@@ -11,7 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useRegisterMutation } from "@/redux/features/auth/api";
+import { useRegisterMutation } from "@/redux/features/auth/auth.api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
@@ -59,9 +59,7 @@ export default function RegisterFrom() {
     };
     try {
       const result = await register(userData).unwrap();
-      toast.success(
-        result.message || "You are registered successfully."
-      );
+      toast.success(result.message || "You are registered successfully.");
       navigate("/verify", { state: { email: data.email } });
     } catch (error: any) {
       toast.error(error.data.message);

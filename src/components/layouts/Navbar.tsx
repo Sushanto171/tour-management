@@ -17,7 +17,7 @@ import {
   authApi,
   useLogoutMutation,
   useUserInfoQuery,
-} from "@/redux/features/auth/api";
+} from "@/redux/features/auth/auth.api";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router";
 import { toast } from "sonner";
@@ -120,7 +120,7 @@ export default function Navbar() {
             </a>
             {/* Navigation menu */}
             <NavigationMenu className="max-md:hidden">
-              <NavigationMenuList >
+              <NavigationMenuList>
                 {navigationLinks.map((link, index) => (
                   <span key={index}>
                     {link.role === "PUBLIC" && (

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DeleteConfirmation } from "@/components/DeleteConfirmation";
-import { AddTourType } from "@/components/modules/admin/tourType/AddTourType";
+import { AddDivisionModal } from "@/components/modules/admin/division/AddDivision";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -11,27 +11,29 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  useDeleteTourTypesMutation,
-  useGetAllTourTypesQuery,
-} from "@/redux/features/tour/tour.api";
+  useDeleteTourDivisionMutation,
+  useGetAllDivisionQuery,
+} from "@/redux/features/division/division.api";
+
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-export default function AddTour() {
-  const { data: tourTypes, isLoading: isTypesLoading } =
-    useGetAllTourTypesQuery(undefined);
-  const [deleteType] = useDeleteTourTypesMutation();
+export default function AddDivision() {
+  const { data: divisions, isLoading: isTypesLoading } =
+    useGetAllDivisionQuery(undefined);
+  const [deleteDivision] = useDeleteTourDivisionMutation();
 
   if (isTypesLoading) {
     return <div>Loading...</div>;
   }
 
   const deleteHandler = async (id: string) => {
+    const toastId = toast.loading("Division deleting...");
     try {
-      await deleteType(id).unwrap();
-      toast.success("Deleted Successfully");
+      await deleteDivision(id).unwrap();
+      toast.success("Deleted Successfully", { id: toastId });
     } catch (error: any) {
-      toast.error(error.data.message);
+      toast.error(error.data.message, { id: toastId });
     }
   };
 
@@ -39,8 +41,8 @@ export default function AddTour() {
     <>
       <div className="w-full max-w-7xl md:max-w-4xl mx-auto  m-2">
         <div className="flex justify-between items-center my-8 ">
-          <h3 className="text-lg font-semibold">/ TourTypes</h3>
-          <AddTourType />
+          <h3 className="text-lg font-semibold">/ Divisions</h3>
+          <AddDivisionModal />
         </div>
         <div className="border border-muted ">
           <Table>
@@ -55,7 +57,7 @@ export default function AddTour() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {tourTypes?.map(
+              {divisions?.map(
                 (type: { name: string; _id: string }, index: number) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">{type?.name}</TableCell>

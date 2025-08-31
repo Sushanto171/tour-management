@@ -12,6 +12,7 @@ export const userSidebarItems: ISidebarItems[] = [
         title: "Booking",
         url: "/user/bookings",
         component: Booking,
+        isActive: false,
       },
     ],
   },

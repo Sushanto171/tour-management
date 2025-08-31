@@ -15,7 +15,14 @@ export interface ISidebarItems {
     component: ComponentType;
     title: string;
     url: string;
+    isActive: boolean;
   }[];
 }
 
 export type TRole = "SUPER_ADMIN" | "ADMIN" | "USER";
+
+export interface IDivision {
+  name: string;
+  description: string;
+  file: File;
+}
