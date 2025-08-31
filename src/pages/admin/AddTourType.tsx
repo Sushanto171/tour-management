@@ -1,5 +1,5 @@
 import { AddTourType } from "@/components/modules/admin/tourType/AddTourType";
-import { Button } from "@/components/ui/button";
+import { DeleteTypeAlert } from "@/components/modules/admin/tourType/DeleteAlert";
 import {
   Table,
   TableBody,
@@ -8,25 +8,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  useGetAllDivisionQuery,
-  useGetAllTourTypesQuery,
-} from "@/redux/features/tour/api";
-import { Trash2 } from "lucide-react";
+import { useGetAllTourTypesQuery } from "@/redux/features/tour/api";
 
 export default function AddTour() {
-  const { data: divisions, isLoading: isDivisionLading } =
-    useGetAllDivisionQuery(undefined);
   const { data: tourTypes, isLoading: isTypesLoading } =
     useGetAllTourTypesQuery(undefined);
-  if (isDivisionLading || isTypesLoading) {
+
+  if (isTypesLoading) {
     return <div>Loading...</div>;
   }
-  console.log(divisions, tourTypes);
 
   return (
     <>
-      <div className="w-full max-w-4xl mx-auto  m-2">
+      <div className="w-full max-w-7xl md:max-w-4xl mx-auto  m-2">
         <div className="flex justify-between items-center my-8 ">
           <h3 className="text-lg font-semibold">/ TourTypes</h3>
           <AddTourType />
@@ -44,16 +38,16 @@ export default function AddTour() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {tourTypes?.map((type: { name: string }, index: number) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">{type?.name}</TableCell>
-                  <TableCell className="flex justify-end">
-                    <Button className="bg-chart-5" size={"sm"}>
-                      <Trash2 />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {tourTypes?.map(
+                (type: { name: string; _id: string }, index: number) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{type?.name}</TableCell>
+                    <TableCell className="flex justify-end">
+                      <DeleteTypeAlert id={type._id} />
+                    </TableCell>
+                  </TableRow>
+                )
+              )}
             </TableBody>
           </Table>
         </div>
