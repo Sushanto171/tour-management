@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,28 +9,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { useDeleteTourTypesMutation } from "@/redux/features/tour/api";
-import { Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import type { ReactNode } from "react";
 
-export function DeleteTypeAlert({ id }: { id: string }) {
-  const [deleteType] = useDeleteTourTypesMutation();
-  const deleteHandler = async (id: string) => {
-    try {
-      await deleteType(id).unwrap();
-      toast.success("Deleted Successfully");
-    } catch (error: any) {
-      toast.error(error.data.message);
-    }
+type TProp = {
+  children: ReactNode;
+  onConfirm: () => void;
+};
+
+export function DeleteConfirmation({ children, onConfirm }: TProp) {
+  const handleConfirm = () => {
+    onConfirm();
   };
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button className="bg-chart-5" size={"sm"}>
-          <Trash2 />
-        </Button>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
@@ -42,7 +33,7 @@ export function DeleteTypeAlert({ id }: { id: string }) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => deleteHandler(id)}>
+          <AlertDialogAction onClick={() => handleConfirm()}>
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>

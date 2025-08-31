@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { DeleteConfirmation } from "@/components/DeleteConfirmation";
 import { AddTourType } from "@/components/modules/admin/tourType/AddTourType";
-import { DeleteTypeAlert } from "@/components/modules/admin/tourType/DeleteAlert";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -8,15 +10,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useGetAllTourTypesQuery } from "@/redux/features/tour/api";
+import {
+  useDeleteTourTypesMutation,
+  useGetAllTourTypesQuery,
+} from "@/redux/features/tour/api";
+import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function AddTour() {
   const { data: tourTypes, isLoading: isTypesLoading } =
     useGetAllTourTypesQuery(undefined);
+  const [deleteType] = useDeleteTourTypesMutation();
 
   if (isTypesLoading) {
     return <div>Loading...</div>;
   }
+
+  const deleteHandler = async (id: string) => {
+    try {
+      await deleteType(id).unwrap();
+      toast.success("Deleted Successfully");
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
+  };
 
   return (
     <>
@@ -43,7 +60,13 @@ export default function AddTour() {
                   <TableRow key={index}>
                     <TableCell className="font-medium">{type?.name}</TableCell>
                     <TableCell className="flex justify-end">
-                      <DeleteTypeAlert id={type._id} />
+                      <DeleteConfirmation
+                        onConfirm={() => deleteHandler(type._id)}
+                      >
+                        <Button className="bg-chart-5" size={"sm"}>
+                          <Trash2 />
+                        </Button>
+                      </DeleteConfirmation>
                     </TableCell>
                   </TableRow>
                 )

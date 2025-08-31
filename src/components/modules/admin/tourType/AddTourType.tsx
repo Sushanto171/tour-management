@@ -32,7 +32,6 @@ export function AddTourType() {
   const submitHandler = async (data: { name: string }) => {
     try {
       const res = await addType({ name: data.name }).unwrap();
-      console.log(res);
       toast.success(res.message);
       setOpen(false);
     } catch (error: any) {
