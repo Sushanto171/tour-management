@@ -43,7 +43,7 @@ export default function LoginFrom() {
         navigate("/");
       }
     } catch (error: any) {
-      toast.error(error.data.message);
+      toast.error(error.data?.message || error.data);
       if (
         error.status === 401 &&
         error.data.message === "User is not verified."

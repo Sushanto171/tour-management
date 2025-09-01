@@ -39,7 +39,7 @@ export function AddTourType() {
     }
   };
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)} className="cursor-pointer">
           Add Tour Type
