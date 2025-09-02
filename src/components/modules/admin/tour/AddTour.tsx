@@ -21,6 +21,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useGetAllDivisionQuery } from "@/redux/features/division/division.api";
 import { useGetAllTourTypesQuery } from "@/redux/features/tour/tour.api";
@@ -32,22 +39,31 @@ import { toast } from "sonner";
 export function AddTourModal() {
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState<File | null>(null);
-  const form = useForm({ defaultValues: { name: "", description: "" } });
-  const { data: divisions, isLoading: isDivisionLading } =
+  const form = useForm({
+    defaultValues: { name: "", description: "", division: "", tourType: "" },
+  });
+  const { data: divisionData, isLoading: isDivisionLading } =
     useGetAllDivisionQuery(undefined);
   const { data: tourTypes, isLoading: isTypesLoading } =
     useGetAllTourTypesQuery(undefined);
   if (isDivisionLading || isTypesLoading) {
     return <div>Loading...</div>;
   }
+  const divisions = divisionData?.map(
+    (division: { _id: string; name: string }) => ({
+      value: division._id,
+      label: division.name,
+    })
+  );
+  console.log(divisions, tourTypes);
 
   const submitHandler = async (data: Partial<IDivision>) => {
     const toastId = toast.loading("File uploading...");
+    console.log(data);
     try {
       const formData = new FormData();
       formData.append("data", JSON.stringify(data));
       formData.append("file", image as File);
-
       toast.success("res.message", { id: toastId });
       setOpen(false);
     } catch (error: any) {
@@ -100,6 +116,39 @@ export function AddTourModal() {
                   <FormDescription className="sr-only">
                     This is your tour type name
                   </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="division"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Division</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a verified email to display" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {divisions?.map(
+                        (division: { _id: string; label: string }) => {
+                          console.log(division);
+                          return (
+                            <SelectItem key={division._id} value={division._id}>
+                              {division.label}
+                            </SelectItem>
+                          );
+                        }
+                      )}
+                    </SelectContent>
+                  </Select>
+
                   <FormMessage />
                 </FormItem>
               )}
