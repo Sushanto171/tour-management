@@ -30,7 +30,6 @@ export interface IDivision {
 
 export interface ITour {
   title: string;
-  slug: string;
   division: string;
   tourType: string;
   description?: string;

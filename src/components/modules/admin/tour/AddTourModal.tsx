@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import MultipleFileUploader from "@/components/MultipleFileUploader";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogClose,
@@ -22,6 +23,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -30,11 +36,13 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { FileMetadata } from "@/hooks/use-file-upload";
+import { cn } from "@/lib/utils";
 import { useGetAllDivisionQuery } from "@/redux/features/division/division.api";
 import { useGetAllTourTypesQuery } from "@/redux/features/tour/tour.api";
-import type { IDivision } from "@/types";
+import type { ITour } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Trash, Trash2 } from "lucide-react";
+import { format } from "date-fns";
+import { CalendarIcon, Plus, Trash, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -130,11 +138,37 @@ export function AddTourModal() {
     })
   );
 
-  console.log(divisions, tourTypes);
-
-  const submitHandler = async (data: Partial<IDivision>) => {
+  const submitHandler = async (data: z.infer<typeof formSchema>) => {
     const toastId = toast.loading("File uploading...");
-    console.log(data);
+
+    if (images.length === 0) {
+      toast.error("Please add some images.", { id: toastId });
+      return;
+    }
+
+    const tourData: ITour = {
+      ...data,
+      costFrom: Number(data.costFrom),
+      minAge: Number(data.minAge),
+      maxGuest: Number(data.maxGuest),
+      included:
+        data.included[0]?.value === ""
+          ? []
+          : data.included?.map((item) => item.value),
+      excluded:
+        data.excluded[0]?.value === ""
+          ? []
+          : data.excluded?.map((item) => item.value),
+      amenities:
+        data.amenities[0]?.value === ""
+          ? []
+          : data.amenities?.map((item) => item.value),
+      tourPlan:
+        data.tourPlan[0]?.value === ""
+          ? []
+          : data.tourPlan?.map((item) => item.value),
+    };
+    console.log({ tourData, images });
     try {
       const formData = new FormData();
       formData.append("data", JSON.stringify(data));
@@ -170,9 +204,105 @@ export function AddTourModal() {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Division Name</FormLabel>
+                  <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input {...field} type="text" placeholder="division name" />
+                    <Input {...field} type="text" />
+                  </FormControl>
+                  <FormDescription className="sr-only">
+                    This is your tour type name
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="costFrom"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cost Form</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="text" />
+                  </FormControl>
+                  <FormDescription className="sr-only">
+                    This is your tour type name
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="arrivalLocation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Arrival Location</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="text" />
+                  </FormControl>
+                  <FormDescription className="sr-only">
+                    This is your tour type name
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="departureLocation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Departure Location</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="text" />
+                  </FormControl>
+                  <FormDescription className="sr-only">
+                    This is your tour type name
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Location</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="text" />
+                  </FormControl>
+                  <FormDescription className="sr-only">
+                    This is your tour type name
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="maxGuest"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Max Guest</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="text" />
+                  </FormControl>
+                  <FormDescription className="sr-only">
+                    This is your tour type name
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="minAge"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Min Age</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="text" />
                   </FormControl>
                   <FormDescription className="sr-only">
                     This is your tour type name
@@ -188,7 +318,7 @@ export function AddTourModal() {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea {...field} placeholder="Description..." />
+                    <Textarea {...field} />
                   </FormControl>
                   <FormDescription className="sr-only">
                     This is your tour type name
@@ -410,6 +540,90 @@ export function AddTourModal() {
                 </div>
               ))}
             </div>
+            <FormField
+              control={form.control}
+              name="startDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Start Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date <
+                          new Date(new Date().setDate(new Date().getDate() - 1))
+                        }
+                        captionLayout="dropdown"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="endDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>End Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date <
+                          new Date(new Date().setDate(new Date().getDate() - 1))
+                        }
+                        captionLayout="dropdown"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </form>
           <MultipleFileUploader onChange={setImages} />
         </Form>
