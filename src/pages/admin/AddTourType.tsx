@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DeleteConfirmation } from "@/components/DeleteConfirmation";
-import { AddTourType } from "@/components/modules/admin/tourType/AddTourType";
+import { AddTourType } from "@/components/modules/admin/tourType/AddTourTypeModal";
 import { Button } from "@/components/ui/button";
 import {
   Table,

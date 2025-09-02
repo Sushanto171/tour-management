@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DeleteConfirmation } from "@/components/DeleteConfirmation";
-import { AddDivisionModal } from "@/components/modules/admin/division/AddDivision";
+import { AddDivisionModal } from "@/components/modules/admin/division/AddDivisionModal";
 import { Button } from "@/components/ui/button";
 import {
   Table,

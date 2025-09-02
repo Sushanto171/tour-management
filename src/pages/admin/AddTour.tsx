@@ -1,99 +1,91 @@
+import { DeleteConfirmation } from "@/components/DeleteConfirmation";
+import { AddTourModal } from "@/components/modules/admin/tour/AddTourModal";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  useGetAllDivisionQuery,
-  useGetAllTourTypesQuery,
-} from "@/redux/features/tour/tour.api";
+import { useGetAllToursQuery } from "@/redux/features/tour/tour.api";
+import { Trash2 } from "lucide-react";
+
+interface ITour {
+  _id: string;
+  title: string;
+  description: string;
+  images: string[];
+  division: string;
+  tourType: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  costFrom: number;
+  tourPlan: string[];
+  included: string[];
+  excluded: string[];
+  amenities: string[];
+  maxGuest: number;
+  minAge: number;
+  createdAt: string;
+  updatedAt: string;
+  slug: string;
+}
 
 export default function AddTour() {
-  const { data: divisions, isLoading: isDivisionLading } =
-    useGetAllDivisionQuery(undefined);
-  const { data: tourTypes, isLoading: isTypesLoading } =
-    useGetAllTourTypesQuery(undefined);
-  if (isDivisionLading || isTypesLoading) {
-    return <div>Loading...</div>;
-  }
-  // console.log(divisions, tourTypes);
-
-  const invoices = [
-    {
-      invoice: "INV001",
-      paymentStatus: "Paid",
-      totalAmount: "$250.00",
-      paymentMethod: "Credit Card",
-    },
-    {
-      invoice: "INV002",
-      paymentStatus: "Pending",
-      totalAmount: "$150.00",
-      paymentMethod: "PayPal",
-    },
-    {
-      invoice: "INV003",
-      paymentStatus: "Unpaid",
-      totalAmount: "$350.00",
-      paymentMethod: "Bank Transfer",
-    },
-    {
-      invoice: "INV004",
-      paymentStatus: "Paid",
-      totalAmount: "$450.00",
-      paymentMethod: "Credit Card",
-    },
-    {
-      invoice: "INV005",
-      paymentStatus: "Paid",
-      totalAmount: "$550.00",
-      paymentMethod: "PayPal",
-    },
-    {
-      invoice: "INV006",
-      paymentStatus: "Pending",
-      totalAmount: "$200.00",
-      paymentMethod: "Bank Transfer",
-    },
-    {
-      invoice: "INV007",
-      paymentStatus: "Unpaid",
-      totalAmount: "$300.00",
-      paymentMethod: "Credit Card",
-    },
-  ];
+  const { data } = useGetAllToursQuery(undefined);
+  console.log(data);
+  const deleteHandler = async (data: string) => {console.log(data);};
   return (
-    <Table>
-      <TableCaption>A list of your recent invoices.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[100px]">Invoice</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {invoices.map((invoice) => (
-          <TableRow key={invoice.invoice}>
-            <TableCell className="font-medium">{invoice.invoice}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentMethod}</TableCell>
-            <TableCell className="text-right">{invoice.totalAmount}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+    <div className="w-full max-w-7xl md:max-w-4xl mx-auto m-2">
+      <div className="flex justify-between my-8">
+        <h3 className="font-medium text-lg">/All Tours</h3>
+        <AddTourModal />
+      </div>
+      <div className="border border-muted ">
+        <Table>
+          <TableHeader className="bg-muted">
+            <TableRow>
+              <TableHead className="text-center font-medium text-md">
+                Title
+              </TableHead>
+              <TableHead className="text-center font-medium text-md">
+                Description
+              </TableHead>
+              <TableHead className="text-center font-medium text-md">
+                Division
+              </TableHead>
+              <TableHead className="text-center font-medium text-md">
+                Tour Type
+              </TableHead>
+              <TableHead className="text-center font-medium text-md">
+                Action
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data?.map((tour: ITour, index: number) => (
+              <TableRow key={index}>
+                <TableCell className="font-medium">{tour.title}</TableCell>
+                <TableCell className="font-medium truncate">
+                  {tour.description}
+                </TableCell>
+                <TableCell className="font-medium">{tour.division}</TableCell>
+                <TableCell className="font-medium">{tour.tourType}</TableCell>
+                <TableCell className="flex justify-end">
+                  <DeleteConfirmation onConfirm={() => deleteHandler(tour._id)}>
+                    <Button className="bg-chart-5" size={"sm"}>
+                      <Trash2 />
+                    </Button>
+                  </DeleteConfirmation>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
   );
 }
