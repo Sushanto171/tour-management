@@ -38,7 +38,10 @@ import { Textarea } from "@/components/ui/textarea";
 import type { FileMetadata } from "@/hooks/use-file-upload";
 import { cn } from "@/lib/utils";
 import { useGetAllDivisionQuery } from "@/redux/features/division/division.api";
-import { useGetAllTourTypesQuery } from "@/redux/features/tour/tour.api";
+import {
+  useAddTourMutation,
+  useGetAllTourTypesQuery,
+} from "@/redux/features/tour/tour.api";
 import type { ITour } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
@@ -75,6 +78,7 @@ export function AddTourModal() {
     useGetAllDivisionQuery(undefined);
   const { data: tourTypesData, isLoading: isTypesLoading } =
     useGetAllTourTypesQuery(undefined);
+  const [addTour] = useAddTourMutation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -168,16 +172,34 @@ export function AddTourModal() {
           ? []
           : data.tourPlan?.map((item) => item.value),
     };
-    console.log({ tourData, images });
+    if (
+      isNaN(tourData.costFrom) ||
+      isNaN(tourData.maxGuest) ||
+      isNaN(tourData.minAge)
+    ) {
+      toast.error(
+        `${
+          (isNaN(tourData.costFrom) && "costFrom") ||
+          (isNaN(tourData.maxGuest) && "maxGuest") ||
+          (isNaN(tourData.minAge) && "minAge")
+        } type must be integer.`,
+        { id: toastId }
+      );
+      return;
+    }
     try {
       const formData = new FormData();
-      formData.append("data", JSON.stringify(data));
+      formData.append("data", JSON.stringify(tourData));
       images.forEach((img) => {
-        formData.append("file", img as File);
+        formData.append("files", img as File);
       });
-      toast.success("res.message", { id: toastId });
+      const res = await addTour(formData).unwrap();
+      console.log({ res });
+      toast.success(res.message, { id: toastId });
       setOpen(false);
+      form.reset();
     } catch (error: any) {
+      console.log({ error });
       toast.error(error.data.message, { id: toastId });
     }
   };
