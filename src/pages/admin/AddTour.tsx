@@ -1,5 +1,5 @@
 import { DeleteConfirmation } from "@/components/DeleteConfirmation";
-import { AddTourModal } from "@/components/modules/admin/tour/AddTour";
+import { AddTourModal } from "@/components/modules/admin/tour/AddTourModal";
 import { Button } from "@/components/ui/button";
 import {
   Table,
