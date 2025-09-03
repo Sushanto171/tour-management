@@ -7,6 +7,7 @@ import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import TourDetails from "@/pages/TourDetails";
 import Tours from "@/pages/Tours";
+import UnAuthorized from "@/pages/UnAuthorized";
 import Verify from "@/pages/Verify";
 import { generateRoute } from "@/utils/generateRoute";
 import withAuth from "@/utils/withAuth";
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
         path: "about",
       },
       {
+        Component: UnAuthorized,
+        path: "/unauthorized",
+      },
+      {
         Component: Tours,
         path: "tours",
       },
@@ -36,7 +41,7 @@ export const router = createBrowserRouter([
         path: "tours/:id",
       },
       {
-        Component: Booking,
+        Component: withAuth(Booking),
         path: "booking/:id",
       },
     ],
@@ -53,6 +58,7 @@ export const router = createBrowserRouter([
     Component: Verify,
     path: "/verify",
   },
+
   {
     Component: withAuth(DashboardLayout, "SUPER_ADMIN"),
     path: "/admin",

@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
+import { useCreateBookingMutation } from "@/redux/features/booking/booking.api";
 import { useGetAllToursQuery } from "@/redux/features/tour/tour.api";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { toast } from "sonner";
 
 // const tourData: ITourPackage = {
 //   _id: "1",
@@ -68,6 +71,7 @@ export default function Booking() {
   const tourData = data?.[0];
   const [guest, setGuest] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [createBooking] = useCreateBookingMutation();
 
   useEffect(() => {
     if (tourData && tourData.costFrom) {
@@ -75,7 +79,20 @@ export default function Booking() {
     }
   }, [tourData, guest]);
 
-  const handleBooking = async () => {};
+  const handleBooking = async () => {
+    const bookingData = {
+      tour: id,
+      guestCount: guest,
+    };
+    try {
+      const res = await createBooking(bookingData).unwrap();
+      if (res.success) {
+        window.open(res.data.paymentUrl);
+      }
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
+  };
 
   return (
     <div className="flex flex-col md:flex-row gap-8 p-6 container mx-auto">
@@ -169,7 +186,7 @@ export default function Booking() {
                     <button
                       onClick={() => setGuest((prev) => prev - 1)}
                       disabled={guest <= 1}
-                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center disabled:opacity-50"
+                      className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       -
                     </button>
@@ -179,7 +196,7 @@ export default function Booking() {
                     <button
                       onClick={() => setGuest((prev) => prev + 1)}
                       disabled={guest >= tourData!.maxGuest}
-                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center disabled:opacity-50"
+                      className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       +
                     </button>
@@ -193,7 +210,7 @@ export default function Booking() {
                   </div>
                   <div className="flex justify-between text-sm mb-2">
                     <span>Guests:</span>
-                    <span>guestCount</span>
+                    <span>{guest}</span>
                   </div>
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total Amount:</span>
