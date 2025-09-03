@@ -3,11 +3,12 @@ import { baseApi } from "@/redux/baseApi";
 export const divisionApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllDivision: builder.query({
-      query: () => ({
+      query: (params) => ({
         url: "/division",
         method: "GET",
+        params,
       }),
-      providesTags: ["DIVISION"],
+      providesTags: ["DIVISION", "TOUR"],
       transformResponse: (response) => response.data,
     }),
     addTourDivision: builder.mutation({

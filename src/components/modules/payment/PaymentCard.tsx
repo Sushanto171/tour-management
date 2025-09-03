@@ -71,7 +71,8 @@ export default function PaymentCard(data: { [k: string]: string }) {
 
         <Button
           asChild
-          className={`mt-6 w-full font-semibold py-2 border border-muted rounded-xl transition ${current.color.replace(
+          variant="outline"
+          className={`mt-6 w-full  transition ${current.color.replace(
             "text-",
             "bg-"
           )} hover:opacity-90`}
