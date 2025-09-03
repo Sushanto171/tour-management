@@ -8,8 +8,8 @@ export interface ITourPackage {
   images: string[];
   location: string;
   costFrom: number;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   included: string[];
   excluded: string[];
   amenities: string[];
@@ -18,4 +18,6 @@ export interface ITourPackage {
   minAge: number;
   departureLocation: string;
   arrivalLocation: string;
+  createdAt: string;
+  updatedAt: string;
 }

@@ -1,9 +1,11 @@
 import App from "@/App";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import About from "@/pages/About";
+import Booking from "@/pages/Bookings";
 import HomePage from "@/pages/HomePage";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
+import TourDetails from "@/pages/TourDetails";
 import Tours from "@/pages/Tours";
 import Verify from "@/pages/Verify";
 import { generateRoute } from "@/utils/generateRoute";
@@ -28,6 +30,14 @@ export const router = createBrowserRouter([
       {
         Component: Tours,
         path: "tours",
+      },
+      {
+        Component: TourDetails,
+        path: "tours/:id",
+      },
+      {
+        Component: Booking,
+        path: "booking/:id",
       },
     ],
   },
