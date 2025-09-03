@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DeleteConfirmation } from "@/components/DeleteConfirmation";
 import { AddTourModal } from "@/components/modules/admin/tour/AddTourModal";
+import Paginate from "@/components/Pagination";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -15,10 +16,13 @@ import {
   useGetAllToursQuery,
 } from "@/redux/features/tour/tour.api";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export default function AddTour() {
-  const { data } = useGetAllToursQuery(undefined);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const { data } = useGetAllToursQuery({ page: currentPage, limit });
   const [deleteTour] = useDeleteTourMutation();
   const deleteHandler = async (id: string) => {
     try {
@@ -28,7 +32,7 @@ export default function AddTour() {
       toast.error(error.data.message);
     }
   };
-
+  const totalPage = data?.meta?.totalPages || 1;
   return (
     <div className="w-full max-w-7xl md:max-w-4xl mx-auto m-2">
       <div className="flex justify-between my-8">
@@ -57,7 +61,7 @@ export default function AddTour() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.map((tour, index: number) => (
+            {data?.data?.map((tour, index: number) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{tour.title}</TableCell>
                 <TableCell className="font-medium truncate">
@@ -77,6 +81,14 @@ export default function AddTour() {
           </TableBody>
         </Table>
       </div>
+      <Paginate
+        currentPage={currentPage}
+        onChange={setCurrentPage}
+        totalPages={totalPage}
+        limit={limit}
+        onLimitChange={setLimit}
+        total={data?.meta?.total || 1}
+      />
     </div>
   );
 }

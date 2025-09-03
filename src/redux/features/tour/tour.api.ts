@@ -28,14 +28,21 @@ export const tourApi = baseApi.injectEndpoints({
       invalidatesTags: ["TOUR_TYPE"],
       transformResponse: (response) => response.data,
     }),
-    getAllTours: builder.query<ITourPackage[], unknown>({
+    getAllTours: builder.query<IResponse<ITourPackage[]>, unknown>({
       query: (params) => ({
         url: "/tour",
         method: "GET",
         params,
       }),
       providesTags: ["TOUR"],
-      transformResponse: (response: IResponse<ITourPackage[]>) => response.data,
+      // transformResponse: (response: IResponse<ITourPackage[]>) => {
+      //   return {
+      //     data: response.data,
+      //     meta: response.meta,
+      //     message: response.message,
+      //     success: response.success,
+      //   };
+      // },
     }),
     addTour: builder.mutation({
       query: (tourData) => ({
