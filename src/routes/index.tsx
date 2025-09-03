@@ -4,6 +4,9 @@ import About from "@/pages/About";
 import Booking from "@/pages/Bookings";
 import HomePage from "@/pages/HomePage";
 import Login from "@/pages/Login";
+import CancelPayment from "@/pages/payment/CancelPayment";
+import FailedPayment from "@/pages/payment/FailedPayment";
+import SuccessPayment from "@/pages/payment/SuccessPayment";
 import Register from "@/pages/Register";
 import TourDetails from "@/pages/TourDetails";
 import Tours from "@/pages/Tours";
@@ -57,6 +60,18 @@ export const router = createBrowserRouter([
   {
     Component: Verify,
     path: "/verify",
+  },
+  {
+    Component: SuccessPayment,
+    path: "payment/success",
+  },
+  {
+    Component: CancelPayment,
+    path: "payment/cancel",
+  },
+  {
+    Component: FailedPayment,
+    path: "payment/fail",
   },
 
   {
