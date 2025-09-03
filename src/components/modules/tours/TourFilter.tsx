@@ -10,30 +10,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useGetAllDivisionQuery } from "@/redux/features/division/division.api";
-import {
-  useGetAllToursQuery,
-  useGetAllTourTypesQuery,
-} from "@/redux/features/tour/tour.api";
-import { useState } from "react";
+import { useGetAllTourTypesQuery } from "@/redux/features/tour/tour.api";
+import { useSearchParams } from "react-router";
 
 export default function TourFilters() {
-  // const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedDivision, setSelectedDivision] = useState<undefined | string>(
-    undefined
-  );
-  const [selectedTourType, setSelectedTourType] = useState<undefined | string>(
-    undefined
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const { data: divisionData, isLoading: divisionIsLoading } =
     useGetAllDivisionQuery(undefined);
 
   const { data: tourTypeData, isLoading: tourTypeIsLoading } =
     useGetAllTourTypesQuery(undefined);
-  const { data } = useGetAllToursQuery({
-    division: selectedDivision,
-    tourType: selectedTourType,
-  });
-  console.log(data?.length);
+
+  const selectedDivision = searchParams.get("division") || undefined;
+  const selectedTourType = searchParams.get("tourType") || undefined;
 
   const divisionOption = divisionData?.map(
     (item: { name: string; _id: string }) => ({
@@ -48,16 +38,22 @@ export default function TourFilters() {
     })
   );
 
-  const handleDivisionChange = (data: string) => {
-    setSelectedDivision(data);
+  const handleDivisionChange = (value: string) => {
+    const param = new URLSearchParams(searchParams);
+    param.set("division", value);
+    setSearchParams(param);
   };
-  const handleTourTypeChange = (data: string) => {
-    setSelectedTourType(data);
-  };
+  const handleTourTypeChange = (value: string) => {
+    const param = new URLSearchParams(searchParams);
+    param.set("tourType", value);
+    setSearchParams(param);
+  };          
 
   const handleClearFilter = () => {
-    setSelectedDivision(undefined);
-    setSelectedTourType(undefined);
+    const param = new URLSearchParams(searchParams);
+    param.delete("division");
+    param.delete("tourType");
+    setSearchParams(param);
   };
   return (
     <div className="col-span-3 w-full h-[500px] border border-muted rounded-md p-5 space-y-4">

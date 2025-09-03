@@ -1,7 +1,6 @@
 import TourFilters from "@/components/modules/tours/TourFilter";
 import { Button } from "@/components/ui/button";
 import { useGetAllToursQuery } from "@/redux/features/tour/tour.api";
-import { useEffect } from "react";
 
 import { Link, useSearchParams } from "react-router";
 
@@ -12,7 +11,7 @@ export default function Tours() {
   const tourType = searchParams.get("tourType") || undefined;
 
   const { data } = useGetAllToursQuery({ division, tourType });
-  useEffect(()=>{},[data?.length])
+
   return (
     <div className="container mx-auto px-5 py-8 grid grid-cols-12 gap-5">
       <TourFilters />
