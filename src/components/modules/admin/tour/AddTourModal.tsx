@@ -129,7 +129,7 @@ export function AddTourModal() {
   if (isDivisionLading || isTypesLoading) {
     return <div>Loading...</div>;
   }
-  const divisions = divisionData?.map(
+  const divisions = divisionData?.data?.map(
     (division: { _id: string; name: string }) => ({
       value: division._id,
       label: division.name,

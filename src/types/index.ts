@@ -28,11 +28,6 @@ export interface ISidebarItems {
 
 export type TRole = "SUPER_ADMIN" | "ADMIN" | "USER";
 
-export interface IDivision {
-  name: string;
-  description: string;
-  file: File;
-}
 
 export interface ITour {
   title: string;

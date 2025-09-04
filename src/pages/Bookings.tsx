@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import { useCreateBookingMutation } from "@/redux/features/booking/booking.api";
-import { useGetAllToursQuery } from "@/redux/features/tour/tour.api";
+import { useGetAllToursQuery, useGetAllTourTypesQuery } from "@/redux/features/tour/tour.api";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -68,7 +68,8 @@ export default function Booking() {
     { _id: id },
     { refetchOnMountOrArgChange: true }
   );
-  const tourData = data?.[0];
+  const tourData = data?.data?.[0];
+  const {data: tourTypeData} = useGetAllTourTypesQuery({_id: tourData?.tourType}, {skip: !data})
   const [guest, setGuest] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const [createBooking] = useCreateBookingMutation();
@@ -93,6 +94,7 @@ export default function Booking() {
       toast.error(error.data.message);
     }
   };
+ 
 
   return (
     <div className="flex flex-col md:flex-row gap-8 p-6 container mx-auto">
@@ -101,12 +103,12 @@ export default function Booking() {
           <p>Something want wrong.</p>
         </>
       )}
-      {!isLoading && !isError && data?.length === 0 && (
+      {!isLoading && !isError && data?.data?.length === 0 && (
         <>
           <p>Tour data not found</p>
         </>
       )}
-      {!isLoading && !isError && data!.length > 0 && (
+      {!isLoading && !isError && data!.data.length > 0 && (
         <>
           {/* Left Section - Tour Summary */}
           <div className="flex-1 space-y-6">
@@ -145,7 +147,7 @@ export default function Booking() {
                   </p>
                 </div>
                 <div>
-                  <strong>Tour Type:</strong> {tourData?.tourType}
+                  <strong>Tour Type:</strong> {tourTypeData?.[0].name}
                 </div>
                 <div>
                   <strong>Max Guests:</strong> {tourData?.maxGuest}

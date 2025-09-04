@@ -17,15 +17,15 @@ export default function TourFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const { data: divisionData, isLoading: divisionIsLoading } =
-    useGetAllDivisionQuery(undefined);
+    useGetAllDivisionQuery({ limit: 1000, field: "_id,name" });
 
   const { data: tourTypeData, isLoading: tourTypeIsLoading } =
-    useGetAllTourTypesQuery(undefined);
+    useGetAllTourTypesQuery({ limit: 1000, field: "_id,name" });
 
   const selectedDivision = searchParams.get("division") || undefined;
   const selectedTourType = searchParams.get("tourType") || undefined;
 
-  const divisionOption = divisionData?.map(
+  const divisionOption = divisionData?.data?.map(
     (item: { name: string; _id: string }) => ({
       label: item.name,
       value: item._id,
@@ -47,7 +47,7 @@ export default function TourFilters() {
     const param = new URLSearchParams(searchParams);
     param.set("tourType", value);
     setSearchParams(param);
-  };          
+  };
 
   const handleClearFilter = () => {
     const param = new URLSearchParams(searchParams);

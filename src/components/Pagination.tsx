@@ -124,7 +124,7 @@ export default function Paginate({
       <div>
         <Select
           onValueChange={(value) => onLimitChange(Number(value))}
-          value={limit.toString()}
+          value={limit?.toString()}
         >
           <SelectTrigger className=" rounded-lg px-2 py-1 border border-muted-foreground cursor-pointer ">
             <SelectValue placeholder="limit" />
@@ -133,7 +133,9 @@ export default function Paginate({
             <SelectGroup>
               <SelectLabel>Limit</SelectLabel>
               {limitOptions.map((limit) => (
-                <SelectItem value={limit.toString()}>{limit}</SelectItem>
+                <SelectItem key={limit} value={limit?.toString()}>
+                  {limit}
+                </SelectItem>
               ))}
             </SelectGroup>
           </SelectContent>

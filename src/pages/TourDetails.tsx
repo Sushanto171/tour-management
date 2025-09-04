@@ -1,5 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { useGetAllToursQuery } from "@/redux/features/tour/tour.api";
+import { useGetAllDivisionQuery } from "@/redux/features/division/division.api";
+import {
+  useGetAllToursQuery,
+  useGetAllTourTypesQuery,
+} from "@/redux/features/tour/tour.api";
 import { format } from "date-fns";
 import { Link, useParams } from "react-router";
 
@@ -65,7 +69,20 @@ export default function TourDetails() {
     { _id: id },
     { refetchOnMountOrArgChange: true, refetchOnFocus: true }
   );
-  const tourData = data?.[0];
+  const tourData = data?.data?.[0];
+  const { data: divisionData } = useGetAllDivisionQuery(
+    {
+      _id: tourData?.division,
+    },
+    { skip: !data }
+  );
+  const { data: tourTypeData } = useGetAllTourTypesQuery(
+    { _id: tourData?.tourType },
+    { skip: !data }
+  );
+
+  const division = divisionData?.data?.[0];
+  const tourType = tourTypeData?.[0];
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -77,7 +94,7 @@ export default function TourDetails() {
           <p>Something want wrong!</p>
         </>
       )}
-      {!isLoading && data?.length === 0 && (
+      {!isLoading && data?.data?.length === 0 && (
         <>
           <p>Tours data not fond!</p>
         </>
@@ -142,10 +159,10 @@ export default function TourDetails() {
                   <strong>Arrival:</strong> {tourData?.arrivalLocation}
                 </p>
                 <p>
-                  <strong>Division:</strong> {tourData?.division}
+                  <strong>Division:</strong> {division?.name}
                 </p>
                 <p>
-                  <strong>Tour Type:</strong> {tourData?.tourType}
+                  <strong>Tour Type:</strong> {tourType?.name}
                 </p>
                 <p>
                   <strong>Min Age:</strong> {tourData?.minAge} years

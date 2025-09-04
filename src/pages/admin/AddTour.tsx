@@ -81,14 +81,16 @@ export default function AddTour() {
           </TableBody>
         </Table>
       </div>
-      <Paginate
-        currentPage={currentPage}
-        onChange={setCurrentPage}
-        totalPages={totalPage}
-        limit={limit}
-        onLimitChange={setLimit}
-        total={data?.meta?.total || 1}
-      />
+      {data && data!.meta!.totalPages > 1 && (
+        <Paginate
+          currentPage={currentPage}
+          onChange={setCurrentPage}
+          totalPages={totalPage}
+          limit={limit}
+          onLimitChange={setLimit}
+          total={data?.meta?.total || 1}
+        />
+      )}
     </div>
   );
 }
