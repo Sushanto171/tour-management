@@ -8,15 +8,18 @@ export default function withAuth(
   requiredRole?: TRole
 ) {
   return function AuthWrapper() {
-    const { data, isLoading } = useUserInfoQuery(undefined);
+    const { data, isLoading, isError } = useUserInfoQuery(undefined);
+    if (isError) {
+      return <Navigate to="/unauthorized" />;
+    }
     if (isLoading) {
       return <div>Loading...</div>;
     }
     if (!isLoading && data && !data.data.email) {
-      return <Navigate to="/" />;
+      return <Navigate to="/unauthorized" />;
     }
     if (requiredRole && !isLoading && data?.data.role !== requiredRole) {
-      return <Navigate to="/" />;
+      return <Navigate to="/unauthorized" />;
     }
     return <Component />;
   };

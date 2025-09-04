@@ -2,10 +2,17 @@ import type { ComponentType } from "react";
 
 export type { IMe, ISendOtp, IVerifyOtp, Login, Register } from "./auth.types";
 
+export interface IMeta {
+  limit: number;
+  page: number;
+  total: number;
+  totalPages: number;
+}
 export interface IResponse<T> {
   success: boolean;
   message: string;
   data: T;
+  meta?: IMeta;
 }
 
 export interface ISidebarItems {
@@ -20,12 +27,6 @@ export interface ISidebarItems {
 }
 
 export type TRole = "SUPER_ADMIN" | "ADMIN" | "USER";
-
-export interface IDivision {
-  name: string;
-  description: string;
-  file: File;
-}
 
 
 export interface ITour {

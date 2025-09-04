@@ -1,4 +1,6 @@
 import { baseApi } from "@/redux/baseApi";
+import type { IResponse } from "@/types";
+import type { ITourPackage } from "@/types/tour.type";
 
 export const tourApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -11,9 +13,10 @@ export const tourApi = baseApi.injectEndpoints({
       invalidatesTags: ["TOUR_TYPE"],
     }),
     getAllTourTypes: builder.query({
-      query: () => ({
+      query: (params) => ({
         url: "/tour/tour-types",
         method: "GET",
+        params,
       }),
       providesTags: ["TOUR_TYPE"],
       transformResponse: (response) => response.data,
@@ -26,19 +29,34 @@ export const tourApi = baseApi.injectEndpoints({
       invalidatesTags: ["TOUR_TYPE"],
       transformResponse: (response) => response.data,
     }),
-    getAllTours: builder.query({
-      query: () => ({
+    getAllTours: builder.query<IResponse<ITourPackage[]>, unknown>({
+      query: (params) => ({
         url: "/tour",
         method: "GET",
+        params,
       }),
       providesTags: ["TOUR"],
-      transformResponse: (response) => response.data,
+      // transformResponse: (response: IResponse<ITourPackage[]>) => {
+      //   return {
+      //     data: response.data,
+      //     meta: response.meta,
+      //     message: response.message,
+      //     success: response.success,
+      //   };
+      // },
     }),
     addTour: builder.mutation({
       query: (tourData) => ({
         url: "/tour/create",
         method: "POST",
         data: tourData,
+      }),
+      invalidatesTags: ["TOUR"],
+    }),
+    deleteTour: builder.mutation({
+      query: (params) => ({
+        url: `/tour/${params}`,
+        method: "DELETE",
       }),
       invalidatesTags: ["TOUR"],
     }),
@@ -51,4 +69,5 @@ export const {
   useDeleteTourTypesMutation,
   useGetAllToursQuery,
   useAddTourMutation,
+  useDeleteTourMutation,
 } = tourApi;

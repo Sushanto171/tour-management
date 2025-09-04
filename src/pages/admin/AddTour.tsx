@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DeleteConfirmation } from "@/components/DeleteConfirmation";
 import { AddTourModal } from "@/components/modules/admin/tour/AddTourModal";
+import Paginate from "@/components/Pagination";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -9,35 +11,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useGetAllToursQuery } from "@/redux/features/tour/tour.api";
+import {
+  useDeleteTourMutation,
+  useGetAllToursQuery,
+} from "@/redux/features/tour/tour.api";
 import { Trash2 } from "lucide-react";
-
-interface ITour {
-  _id: string;
-  title: string;
-  description: string;
-  images: string[];
-  division: string;
-  tourType: string;
-  location: string;
-  startDate: string;
-  endDate: string;
-  costFrom: number;
-  tourPlan: string[];
-  included: string[];
-  excluded: string[];
-  amenities: string[];
-  maxGuest: number;
-  minAge: number;
-  createdAt: string;
-  updatedAt: string;
-  slug: string;
-}
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function AddTour() {
-  const { data } = useGetAllToursQuery(undefined);
-  console.log(data);
-  const deleteHandler = async (data: string) => {console.log(data);};
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const { data } = useGetAllToursQuery({ page: currentPage, limit });
+  const [deleteTour] = useDeleteTourMutation();
+  const deleteHandler = async (id: string) => {
+    try {
+      const res = await deleteTour(id).unwrap();
+      toast.success(res.message);
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
+  };
+  const totalPage = data?.meta?.totalPages || 1;
   return (
     <div className="w-full max-w-7xl md:max-w-4xl mx-auto m-2">
       <div className="flex justify-between my-8">
@@ -66,7 +61,7 @@ export default function AddTour() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.map((tour: ITour, index: number) => (
+            {data?.data?.map((tour, index: number) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{tour.title}</TableCell>
                 <TableCell className="font-medium truncate">
@@ -86,6 +81,16 @@ export default function AddTour() {
           </TableBody>
         </Table>
       </div>
+      {data && data!.meta!.totalPages > 1 && (
+        <Paginate
+          currentPage={currentPage}
+          onChange={setCurrentPage}
+          totalPages={totalPage}
+          limit={limit}
+          onLimitChange={setLimit}
+          total={data?.meta?.total || 1}
+        />
+      )}
     </div>
   );
 }

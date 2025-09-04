@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DeleteConfirmation } from "@/components/DeleteConfirmation";
 import { AddDivisionModal } from "@/components/modules/admin/division/AddDivisionModal";
+import Paginate from "@/components/Pagination";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -16,14 +17,19 @@ import {
 } from "@/redux/features/division/division.api";
 
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export default function AddDivision() {
-  const { data: divisions, isLoading: isTypesLoading } =
-    useGetAllDivisionQuery(undefined);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const { data: divisions, isLoading } = useGetAllDivisionQuery({
+    page: currentPage,
+    limit,
+  });
   const [deleteDivision] = useDeleteTourDivisionMutation();
 
-  if (isTypesLoading) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -57,25 +63,33 @@ export default function AddDivision() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {divisions?.map(
-                (type: { name: string; _id: string }, index: number) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{type?.name}</TableCell>
-                    <TableCell className="flex justify-end">
-                      <DeleteConfirmation
-                        onConfirm={() => deleteHandler(type._id)}
-                      >
-                        <Button className="bg-chart-5" size={"sm"}>
-                          <Trash2 />
-                        </Button>
-                      </DeleteConfirmation>
-                    </TableCell>
-                  </TableRow>
-                )
-              )}
+              {divisions?.data?.map((type, index: number) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">{type?.name}</TableCell>
+                  <TableCell className="flex justify-end">
+                    <DeleteConfirmation
+                      onConfirm={() => deleteHandler(type._id)}
+                    >
+                      <Button className="bg-chart-5" size={"sm"}>
+                        <Trash2 />
+                      </Button>
+                    </DeleteConfirmation>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>
+        {divisions && divisions!.meta!.totalPages > 1 && (
+          <Paginate
+            currentPage={currentPage}
+            onChange={setCurrentPage}
+            totalPages={divisions.meta!.totalPages}
+            limit={limit}
+            onLimitChange={setLimit}
+            total={divisions!.meta?.total || 1}
+          />
+        )}
       </div>
     </>
   );
